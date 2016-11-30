@@ -7,8 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @interface NSMutableAttributedString (FPFTextAtt)
+
+@property (strong, nonatomic) NSMutableParagraphStyle *paragraph;
 
 + (NSMutableAttributedString *)fpf_attributeText:(NSString *)string;
 
@@ -24,9 +27,17 @@
 
 - (void)fpf_setLineSpace:(NSInteger)space;
 
+- (void)fpf_setLineSpace:(NSInteger)space range:(NSRange)range;
+
 - (void)fpf_setLineHeight:(NSInteger)height;
 
+- (void)fpf_setLineHeight:(NSInteger)height range:(NSRange)range;
+
 - (void)fpf_setLineBreakMode:(NSLineBreakMode)breakMode;
+
+- (void)fpf_setLineBreakMode:(NSLineBreakMode)breakMode range:(NSRange)range;
+
+- (void)fpf_setAlignment:(NSTextAlignment)alitnment;
 
 
 + (NSAttributedString *)fpf_attachmentAttributedWithImage:(UIImage *)image;

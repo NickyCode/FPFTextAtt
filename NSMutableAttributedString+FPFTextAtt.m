@@ -7,6 +7,7 @@
 //
 
 #import "NSMutableAttributedString+FPFTextAtt.h"
+#import <objc/runtime.h>
 
 @implementation NSMutableAttributedString (FPFTextAtt)
 
@@ -47,26 +48,54 @@
     [self addAttributes:@{NSForegroundColorAttributeName : color} range:range];
 }
 
+#pragma mark - about paragraph
+
 - (void)fpf_setLineSpace:(NSInteger)space
 {
-    NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    [paragraphStyle setLineSpacing:space];
-    [self addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, self.length)];
+    [self.paragraph setLineSpacing:space];
+    [self addAttribute:NSParagraphStyleAttributeName value:self.paragraph range:NSMakeRange(0, self.length)];
+}
+
+- (void)fpf_setLineSpace:(NSInteger)space range:(NSRange)range
+{
+    NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
+    [paragraph setLineSpacing:space];
+    [self addAttribute:NSParagraphStyleAttributeName value:paragraph range:range];
 }
 
 - (void)fpf_setLineHeight:(NSInteger)height
 {
-    NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    [paragraphStyle setMinimumLineHeight:height];
-    [self addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, self.length)];
+    [self.paragraph setMinimumLineHeight:height];
+    [self addAttribute:NSParagraphStyleAttributeName value:self.paragraph range:NSMakeRange(0, self.length)];
+}
+
+- (void)fpf_setLineHeight:(NSInteger)height range:(NSRange)range
+{
+    NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
+    [paragraph setMinimumLineHeight:height];
+    [self addAttribute:NSParagraphStyleAttributeName value:paragraph range:range];
 }
 
 - (void)fpf_setLineBreakMode:(NSLineBreakMode)breakMode
 {
-    NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    [paragraphStyle setLineBreakMode:breakMode];
-    [self addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, self.length)];
+    [self.paragraph setLineBreakMode:breakMode];
+    [self addAttribute:NSParagraphStyleAttributeName value:self.paragraph range:NSMakeRange(0, self.length)];
 }
+
+- (void)fpf_setLineBreakMode:(NSLineBreakMode)breakMode range:(NSRange)range
+{
+    NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
+    [paragraph setLineBreakMode:breakMode];
+    [self addAttribute:NSParagraphStyleAttributeName value:paragraph range:range];
+}
+
+- (void)fpf_setAlignment:(NSTextAlignment)alitnment
+{
+    [self.paragraph setAlignment:alitnment];
+    [self addAttribute:NSParagraphStyleAttributeName value:self.paragraph range:NSMakeRange(0, self.length)];
+}
+
+#pragma mark - image
 
 + (NSAttributedString *)fpf_attachmentAttributedWithImage:(UIImage *)image
 {
@@ -102,6 +131,24 @@
     if (image) {
         [self replaceCharactersInRange:range withAttributedString:[[self class] fpf_attachmentAttributedWithImage:image]];
     }
+}
+
+#pragma mark - paragarph porperty
+
+- (NSMutableParagraphStyle *)paragraph
+{
+    NSMutableParagraphStyle *paragraph =  objc_getAssociatedObject(self, @selector(paragraph));
+    
+    if (!paragraph) {
+        self.paragraph = [[NSMutableParagraphStyle alloc] init];
+    }
+    
+    return paragraph;
+}
+
+- (void)setParagraph:(NSMutableParagraphStyle *)paragraph
+{
+    objc_setAssociatedObject(self, @selector(paragraph), paragraph, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end
